@@ -19,7 +19,7 @@ sudo apt-get install -y build-essential cmake pkg-config \
     libhdf5-dev libhdf5-serial-dev libhdf5-103 \
     libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5 \
     python3-dev python3-pip \
-    libavresample4 libavresample-dev
+    libavresample4 libavresample-dev libopenjp3d7
     
 sudo pip3 install "numpy" "picamera[array]"
 ```
@@ -73,4 +73,17 @@ echo -e "import cv2\nprint(cv2.__version__)" | python3
 ```bash
 sudo sed -i -e 's/^CONF_SWAPSIZE=.*$/CONF_SWAPSIZE=100/g' /etc/dphys-swapfile
 sudo /etc/init.d/dphys-swapfile restart
+```
+
+
+### bugfixes
+if `echo -e "import cv2\nprint(cv2.__version__)" | python3` reports an error, try:
+```bash
+sudo apt-get reinstall libopenjp2-7
+
+cd ~/opencv/build
+sudo make uninstall
+sudo make install
+
+sudo ldconfig
 ```

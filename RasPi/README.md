@@ -2,7 +2,7 @@
 
 ## RaspBerry Setup instructions
 - use the 'Raspberry Pi OS with desktop and recommended software' image of Raspberry Pi OS
-- I trust you can burn these 8GB yourself to your Raspi.
+- I trust you can burn these 8GB yourself to your SD Card.
 - I also trust you'll know how to get a console/bash/ssh/shell.
 - Just simply copy paste the following commands into your shell.
 
@@ -18,3 +18,10 @@ sudo apt-get upgrade -y
 # yes, also linux should be rebooted after an update
 sudo reboot
 ```
+
+
+#### install python libraries
+```bash
+sudo pip3 install simplejson flask yattag hurry.filesize
+```
+
