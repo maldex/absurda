@@ -12,7 +12,7 @@ from hurry.filesize import size
 
 class MyPyPiCam(object):
     def __init__(self, device=0, width=1920, height=1080, rotation=0, contrast=0, brightness=50, saturation=0, sharpness=0, effect='none', awb='auto', exposure='auto'):
-        self.camera = picamera.PiCamera(device)
+        self.camera = picamera.PiCamera(0)
         self.camera.resolution = (width, height)
         self.camera.rotation = rotation
         self.camera.brightness = brightness
@@ -26,12 +26,6 @@ class MyPyPiCam(object):
         self._preview = False
         self.last_pic = io.BytesIO()
         self.set_display_preview(False)
-
-    def __del__(self):
-        try:
-            self.camera.close()
-        except Exception:
-            pass
 
     def get_display_preview(self):
         return self._preview
@@ -79,35 +73,56 @@ def index():
     doc, tag, text = Doc().tagtext()
 
     with tag('h2'):
-        text("Get Data")
+        text("Get Data Area")
 
-    with tag('a', ('href', '/pic.jpeg?width=640&height=400')): text('VGA')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?width=1280&height=720')): text('SD')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?width=1920&height=1080')): text('HD')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?width=3440&height=1440')): text('1440p')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?width=3840&height=2160')): text('UHD')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg')): text('pic')
-    with tag('br'): pass
-    with tag('a', ('href', '/pic.jpeg?width=640&height=400&effect=emboss')): text('emboss')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?effect=negative')): text('negative')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?effect=cartoon')): text('cartoon')
-    text(' - ')
-    with tag('a', ('href', 'https://picamera.readthedocs.io/en/release-1.10/api_camera.html#picamera.camera.PiCamera.image_effect')): text('effects')
-    with tag('br'): pass
-    with tag('a', ('href', '/pic.jpeg?width=640&height=400&exposure=backlight')): text('backlight')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?exposure=verylong&effect=negative')): text('long/negative')
-    text(' - ')
-    with tag('a', ('href', '/pic.jpeg?width=640&height=400&exposure=spotlight&effect=emboss')): text('spotlight/emboss')
-    text(' - ')
-    with tag('a', ('href', 'https://picamera.readthedocs.io/en/release-1.10/api_camera.html#picamera.camera.PiCamera.exposure_mode')): text('exposures')
+    with tag('big'):
+        with tag('a', ('href', '/pic.jpeg?w=640&h=400')): text('VGA')
+        text(' - ')
+        with tag('a', ('href', '/pic.jpeg?w=1280&h=720')): text('SD')
+        text(' - ')
+        with tag('a', ('href', '/pic.jpeg?w=1920&h=1080')): text('HD')
+        text(' - ')
+        with tag('a', ('href', '/pic.jpeg?w=3440&h=1440')): text('1440p')
+        text(' - ')
+        with tag('a', ('href', '/pic.jpeg?w=3840&h=2160')): text('UHD')
+        text(' - ')
+        with tag('a', ('href', '/pic.jpeg')): text('pic')
+        with tag('br'): pass
+        with tag('a', ('href', '/pic.jpeg?w=640&h=400&e=emboss')): text('emboss')
+
+
+    with tag('hr'):
+        pass
+    # with tag('h2'):
+    #     text("Admin Area")
+    #
+    # if not 'mode' in request.args:
+    #     with tag('table'):
+    #         with tag('tr'):
+    #             with tag('form', ('method', 'get')):
+    #                 with tag('td'):
+    #                     if MyCam.get_display_preview(): v = "stop preview"
+    #                     else: v = "start preview"
+    #                     with tag('input', ('type', 'submit'), ('name', 'mode'), ('value', v)):
+    #                         pass
+    #
+    # else: # mode was specified
+    #     if request.args['mode'].isupper():
+    #         with tag('h1'):
+    #             text("ARE U SURE?")
+    #         with tag('form', ('method', 'get')):
+    #             with tag('input', ('type', 'submit'), ('name', 'mode'), ('value', request.args['mode'].lower())):
+    #                 pass
+    #
+    #     if request.args['mode'].endswith("preview"):
+    #         MyCam.set_display_preview(request.args['mode'].startswith("start"))
+    #         with tag('meta', ('http-equiv', 'refresh'), ('content', '0; url=' + request.environ['PATH_INFO'])):
+    #             pass
+    #         return doc.getvalue()
+    #
+    #     if request.args['mode'] == "start preview":
+    #         MyCam.set_display_preview(True)
+    #
 
 
     with tag('hr'):
@@ -129,25 +144,15 @@ def index():
     return Response(doc.getvalue(), mimetype='text/html;charset=UTF-8')
 
 @app.route("/pic.jpeg")
-def get(width=1920, height=1080, effect='none', exposure='auto'):
-    if 'width' in request.args:
-        width = int(request.args['width'])
-    if 'height' in request.args:
-        height = int(request.args['height'])
-    if 'effect' in request.args:
-        effect = request.args['effect']
-    if 'exposure' in request.args:
-        exposure = request.args['exposure']
-    try:
-        camera = MyPyPiCam(width=width, height=height, effect=effect, exposure=exposure)
-        picture = camera.capture()
-        return Response(picture.getvalue(), mimetype='image/jpeg')
-    except picamera.exc.PiCameraMMALError as e:
-        logging.error(e)
-    finally:
-        camera.__del__()
-
-
+def get(width=None, height=None, effects='none', exposure='auto'):
+    if 'w' in request.args:
+        width = int(request.args['w'])
+    if 'h' in request.args:
+        height = int(request.args['h'])
+    # obj = MyCam.capture(width=width, height=height)
+    camera = MyPyPiCam(width=width, height=height)
+    picture = camera.capture()
+    return Response(picture.getvalue(), mimetype='image/jpeg')
 
 # https://picamera.readthedocs.io/en/release-1.10/api_camera.html
 # effects:  none, negative, solarize, sketch, denoise, emboss, oilpaint, hatch, gpen, pastel, watercolor, film, blur, saturation, colorswap, washedout, posterise, colorpoint, colorbalance, cartoon, deinterlace1 und deinterlace2
