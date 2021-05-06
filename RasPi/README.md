@@ -22,6 +22,12 @@ sudo reboot
 
 #### install python libraries
 ```bash
-sudo pip3 install simplejson flask yattag hurry.filesize
+sudo pip3 install simplejson flask yattag hurry.filesize wiringpi 
 ```
 
+##### additional permissions for PWM/Servo
+```bash
+sudo adduser pi gpio
+sudo chown root.gpio /dev/gpiomem
+sudo chmod g+rw /dev/gpiomem
+```
