@@ -1,20 +1,13 @@
-# this is a SystemD control file
-
-# https://blog.miguelgrinberg.com/post/running-a-flask-application-as-a-service-with-systemd
-# sudo systemctl enable /home/pi/absurda/RasPi/CamService.service
-# sudo systemctl daemon-reload
-
-
 [Unit]
-Description=CamService
+Description=CamService.py
 After=network.target
 
 [Service]
 User=pi
-WorkingDirectory=/home/pi/absurda/RasPi
+WorkingDirectory=/home/pi/absurda/RasPy
 ExecStart=/usr/bin/python3 CamService.py
 Restart=always
-RestartSec=
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
