@@ -8,18 +8,16 @@
 
 #### 
 running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
-- 1 System Options -> S3 Password -> set a new one
-- 1 System Options -> S4 Hostname -> rpi-serialnr
-- 1 System Options -> S2 Audio -> HeadPhones
-- 1 System Options -> S7 Splash Screen -> no
-- 2 Display Options -> D4 Screen Blanking -> no
-- 3 Interface Options -> P1 Camera -> yes
-- 3 Interface Options -> P2 SSH -> yes
-- 3 Interface Options -> P5 I2C -> yes
-- 4 Performance Options -> P2 GPU Memory -> 128
-- 5 Internationalization -> L2 Timezone -> Europe/Zurich
 - 5 Internationalization -> L3 Keyboard -> German Switzerland & enable alt-ctrl-backspace to kill X11
-
+- 5 Internationalization -> L2 Timezone -> Europe/Zurich
+- 4 Performance Options -> P2 GPU Memory -> 128
+- 3 Interface Options -> P5 I2C -> yes
+- 3 Interface Options -> P2 SSH -> yes
+- 3 Interface Options -> P1 Camera -> yes
+- 2 Display Options -> D4 Screen Blanking -> no
+- 1 System Options -> S4 Hostname -> rpi-serialnr (eg. rpi-a8df)
+- 1 System Options -> S7 Splash Screen -> no
+- 1 System Options -> S3 Password -> set a new one
 
 #### just fresh Raspberry basic tasks
 ```bash
@@ -36,7 +34,7 @@ sudo reboot
 
 #### install other stuff
 ```bash
-sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate
+sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate python3-pip
 ```
 
 ### more adjustments
