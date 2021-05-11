@@ -6,6 +6,22 @@
 - I also trust you'll know how to get a console/bash/ssh/shell.
 - Just simply copy paste the following commands into your shell.
 
+#### 
+running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
+- 1 System Options -> S3 Password -> set a new one
+- 1 System Options -> S4 Hostname -> rpi-serialnr
+- 1 System Options -> S2 Audio -> HeadPhones
+- 1 System Options -> S7 Splash Screen -> no
+- 2 Display Options -> D4 Screen Blanking -> no
+- 3 Interface Options -> P1 Camera -> yes
+- 3 Interface Options -> P2 SSH -> yes
+- 3 Interface Options -> P5 I2C -> yes
+- 4 Performance Options -> P2 GPU Memory -> 128
+- 5 Internation -> L2 Timezone -> Europe/Zurich
+
+
+
+
 #### just fresh Raspberry basic tasks
 ```bash
 # remove some space-consuming packets
@@ -22,7 +38,7 @@ sudo reboot
 
 #### install python libraries
 ```bash
-sudo pip3 install simplejson flask yattag hurry.filesize wiringpi 
+sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl
 ```
 
 #### install other stuff
@@ -52,6 +68,6 @@ sudo systemctl restart syslog
 cd ~
 git clone https://github.com/maldex/absurda.git
 sudo systemctl enable --now /home/pi/absurda/RasPy/CamService.service
-#sudo systemctl enable --now /home/pi/absurda/RasPy/OpenCvService.service
-sudo systemctl enable --now /home/pi/absurda/RasPy/ServoService.service
+# sudo systemctl enable --now /home/pi/absurda/RasPy/OpenCvService.service
+# sudo systemctl enable --now /home/pi/absurda/RasPy/ServoService.service
 ```
