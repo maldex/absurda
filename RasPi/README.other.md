@@ -66,7 +66,7 @@ sudo systemctl enable --now openvpn
 
 ```bash
 function util_verify_public_resolvability() {
-    if ! which dig; then
+    if ! which dig > /dev/null 2>&1; then
         sudo sudo apt-get install dnsutils
     fi
     if [ "$1" != "" ]; then assumedPublicName=$1; else assumedPublicName=`hostname -f`; fi
@@ -109,7 +109,8 @@ function install_postfix() {
     fi
         
     # overwrite postfix configuration
-    echo "# localhost-only mail-relay
+    sudo bash -c "cat << EOF > /etc/postfix/main.cf
+# localhost-only mail-relay
 inet_protocols = ipv4
 inet_interfaces = loopback-only
 mynetworks = 127.0.0.0/8
@@ -122,9 +123,11 @@ header_checks = pcre:/etc/postfix/header_checks.pcre
 # send mail to smarthost instead directly to recipient
 #relayhost = RELAYHOST
 # when sending directly (w/o relay host), set myhostname to your public IP/Name 
-#myhostname = SENDERDOMAIN" > /etc/postfix/main.cf
-     
-    echo '### tweak the from-address look
+#myhostname = SENDERDOMAIN
+EOF" 
+    
+    sudo bash -c 'cat << EOF > 
+echo '### tweak the from-address look
 /From:(.*)<(.*)@(.*)>/ REPLACE From: RWT${1}<${2}_AT_${3}@SENDERDOMAIN>
 /From:(.*)<(.*)>/ REPLACE From: RWT${1}<${2}@SENDERDOMAIN>
 # ${1} = orginal display name
@@ -137,36 +140,37 @@ header_checks = pcre:/etc/postfix/header_checks.pcre
       
     echo '### send ALL mail to this address
 /./     RECEIPIENT' > /etc/postfix/recipient.regex
-     
+EOF' > /etc/postfix/recipient.regex
+
     # apply values from above
-    sed -i "s?RECEIPIENT?${RECEIPIENT}?g"       /etc/postfix/*
-    sed -i "s?RELAYHOST?${RELAYHOST}?g"         /etc/postfix/*
+    sudo sed -i "s?RECEIPIENT?${RECEIPIENT}?g"       /etc/postfix/*
+    sudo sed -i "s?RELAYHOST?${RELAYHOST}?g"         /etc/postfix/*
     if [ "${RELAYHOST}" != "" ]; then
-        sed -i "s?#relayhost?relayhost?g"      /etc/postfix/main.cf
+        sudo sed -i "s?#relayhost?relayhost?g"      /etc/postfix/main.cf
         fi
     if [ "${SENDERDOMAIN}" != "" ]; then
-        sed -i "s?SENDERDOMAIN?${SENDERDOMAIN}?g"   /etc/postfix/*
+        sudo sed -i "s?SENDERDOMAIN?${SENDERDOMAIN}?g"   /etc/postfix/*
         fi
     if [ "${MY_ENVIRONMENT}}" != "" ]; then
-        sed -i "s?RWT?${MY_ENVIRONMENT}?g"   /etc/postfix/*
+        sudo sed -i "s?RWT?${MY_ENVIRONMENT}?g"   /etc/postfix/*
         fi
         
     # local unix mail aliases
     if ! grep -q "${RECEIPIENT}" /etc/aliases; then
-        echo "root:  ${RECEIPIENT}" >> /etc/aliases
-        newaliases
+        sudo echo "root:  ${RECEIPIENT}" >> /etc/aliases
+        sudo newaliases
         fi
      
     # do you want to fetch all generated mail and send to receipient only if public reverse lookup does not match?
     if [ "public_resolvable" != "0" ]; then   # when i go to internet, internet does not resolve back to me - i'll be a spammer :(
         # activate receipient rewriting / catch-all rule
-        sed -i "s?#recipient_canonical_maps?recipient_canonical_maps?g"   /etc/postfix/main.cf
-        sed -i "s?header_checks?#header_checks?g"   /etc/postfix/main.cf
+        sudo sed -i "s?#recipient_canonical_maps?recipient_canonical_maps?g"   /etc/postfix/main.cf
+        sudo sed -i "s?header_checks?#header_checks?g"   /etc/postfix/main.cf
         fi
     
     echo "--------------------------------" > /var/log/maillog 
-    chmod g-w /etc/postfix/*
-    systemctl restart postfix; systemctl status postfix
+    sudo chmod g-w /etc/postfix/*
+    sudo systemctl restart postfix; systemctl status postfix
     
     # delete all enqueued mails from failing tests before - nasty
     postsuper -d ALL
