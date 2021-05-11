@@ -3,36 +3,12 @@ sudo rm /var/lib/dpkg/info/ddclient.*
 sudo dpkg --configure -a
 sudo dpkg -r ddclient
 sudo dpkg -P ddclient
-```
 
-
-```bash
-export DEBIAN_FRONTEND=noninteractive
-sudo apt-get -yq install ddclient
-
-sudo bash -c "cat << EOF > /etc/ddclient.conf
-# Basic configuration file for ddclient
-#
-# /etc/ddclient.conf
-daemon=600
-cache=/tmp/ddclient.cache
-pid=/var/run/ddclient.pid
-use=web, web=checkip.dyndns.com/, web-skip='IP Address'
-login=johnydebbo
-password=-------------
-protocol=dyndns2
-server=members.dyndns.org
-wildcard=NO
-rpi-c8de.forgot.his.name
-EOF"
-
-sudo sed -i 's/run_daemon=.*/run_daemon=true/g' /etc/default/ddclient
-
-sudo systemctl enable --now ddclient
+export confurl="http://-------------/Data/absurda/$(grep Serial /proc/cpuinfo | cut -c23-)"
 ```
 
 ```bash
-mkdir ~/.ovpn
+sudo mkdir /etc/openvpn/.current; sudo chmod 600 /etc/openvpn/.current
 sudo apt-get install openvpn -y
 
 sudo bash -c "cat << EOF > /lib/systemd/system/openvpn.service
@@ -41,7 +17,7 @@ Description=OpenVPN service
 After=network.target
 
 [Service]
-ExecStart=/usr/sbin/openvpn /home/pi/.ovpn/bnet.conf
+ExecStart=/usr/sbin/openvpn /etc/openvpn/.current/now.conf
 Restart=always
 RestartSec=3
 
@@ -49,19 +25,30 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF"
 
-sudo systemctl daemon-reload
+sudo wget -O /etc/openvpn/.current/now.conf  "${confurl}-config.ovpn"
+sudo wget -O /etc/openvpn/.current/now.creds "${confurl}-config.creds" 
 
-# wget -O - http://.........   | | tar zxf -
-vi /home/pi/.ovpn/bnet.conf /home/pi/.ovpn/bnet.creds
-sed -i 's?remote.*?remote bnet.gebaschtel.ch 1194 udp4?g' /home/pi/.ovpn/bnet.conf
-sed -i 's?auth-user-pass.*?auth-user-pass /home/pi/.ovpn/bnet.creds?g' /home/pi/.ovpn/bnet.conf
+sudo sed -i 's?remote.*?remote openvpn.bnet.gebaschtel.ch 1194 udp4?g' /etc/openvpn/.current/now.conf
+sudo sed -i 's?auth-user-pass.*?auth-user-pass /etc/openvpn/.current/now.creds?g' /etc/openvpn/.current/now.conf
 
 sudo bash -c "cat << EOF >> /etc/crontab
 # openvpn watchdog  
 */5  *   *   *   *       root     ping -i 60 -c 5 "$(route -n | grep 'tun0' | awk '{print $2;}' | sort -n | tail -n1)" > /dev/null || systemctl restart openvpn | mutt -s 'OpenVPN restarted' log@gebaschtel.ch
 EOF"
 
+sudo systemctl daemon-reload
 sudo systemctl enable --now openvpn
+```
+
+```bash
+export DEBIAN_FRONTEND=noninteractive
+sudo apt-get -yq install ddclient
+
+sudo sed -i 's/run_daemon=.*/run_daemon=true/g' /etc/default/ddclient
+
+sudo wget -O /etc/ddclient.conf "${confurl}-ddclient.conf" 
+
+sudo systemctl enable --now ddclient
 ```
 
 ```bash

@@ -38,7 +38,7 @@ mv -v opencv_contrib-${OPENCV_VERSION} opencv_contrib
 #### compile OpenCV
 ```bash
 
-mkdir ~/opencv/build
+rm -rf ~/opencv/build; mkdir ~/opencv/build
 cd ~/opencv/build
 # detect capabilities and optimize upcomming compile
 time cmake -D CMAKE_BUILD_TYPE=RELEASE \
