@@ -31,11 +31,6 @@ sudo wget -O /etc/openvpn/.current/now.creds "${confurl}-config.creds"
 sudo sed -i 's?remote.*?remote openvpn.bnet.gebaschtel.ch 1194 udp4?g' /etc/openvpn/.current/now.conf
 sudo sed -i 's?auth-user-pass.*?auth-user-pass /etc/openvpn/.current/now.creds?g' /etc/openvpn/.current/now.conf
 
-sudo bash -c "cat << EOF >> /etc/crontab
-# openvpn watchdog  
-*/5  *   *   *   *       root     ping -i 60 -c 5 "$(route -n | grep 'tun0' | awk '{print $2;}' | sort -n | tail -n1)" > /dev/null || systemctl restart openvpn | mutt -s 'OpenVPN restarted' log@gebaschtel.ch
-EOF"
-
 sudo systemctl daemon-reload
 sudo systemctl enable --now openvpn
 ```
