@@ -1,0 +1,13 @@
+[Unit]
+Description=ServoService.py
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/absurda/RasPi
+ExecStart=/usr/bin/python3 ServoService.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

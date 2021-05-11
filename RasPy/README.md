@@ -27,13 +27,21 @@ sudo pip3 install simplejson flask yattag hurry.filesize wiringpi
 
 #### install other stuff
 ```bash
-sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower
+sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate
 ```
 
 ### more adjustments
 ```bash
-sudo sed -i '/^exit 0/icpupower frequency-set -g ondemand > /dev/null' /etc/rc.local
-sudo sed -i '/^exit 0/iecho "\`date`\" | mutt -s "system rebooted" log@gebaschtel.ch' /etc/rc.local
+sudo sed -i '/pool/ s/^#*/#/' /etc/ntp.conf
+sudo sed -i '/^#pool 0.*/ipool time.gebaschtel.ch iburst' /etc/ntp.conf
+sudo systemctl enable --now ntp
+
+
+sudo sed -i '/^exit 0/i# systemctl stop ntp; ntpdate time.gebaschtel.ch; systemctl start ntp\
+cpupower frequency-set -g ondemand > /dev/null\
+echo "\`date`\" | mutt -s "system rebooted" log@gebaschtel.ch\
+' /etc/rc.local
+
 sudo bash -c 'cat << EOF >> /etc/rsyslog.conf 
 *.*  @@syslog.bnet.gebaschtel.ch:514
 EOF'
@@ -43,5 +51,7 @@ sudo systemctl restart syslog
 ```bash
 cd ~
 git clone https://github.com/maldex/absurda.git
-sudo systemctl enable /home/pi/absurda/RasPi/CamService.service
+sudo systemctl enable --now /home/pi/absurda/RasPy/CamService.service
+#sudo systemctl enable --now /home/pi/absurda/RasPy/OpenCvService.service
+sudo systemctl enable --now /home/pi/absurda/RasPy/ServoService.service
 ```

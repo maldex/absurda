@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenCvService.py
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/absurda/RasPi
+ExecStart=/usr/bin/python3 OpenCvService.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
