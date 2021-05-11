@@ -58,7 +58,7 @@ sed -i 's?auth-user-pass.*?auth-user-pass /home/pi/.ovpn/bnet.creds?g' /home/pi/
 
 sudo bash -c "cat << EOF >> /etc/crontab
 # openvpn watchdog  
-*/5  *   *   *   *       root     ping -i 60 -c 5 "$(route -n | grep 'tun0' | awk '{print $2;}' | sort -n | tail -n1)" > /dev/null || systemctl restart openvpn
+*/5  *   *   *   *       root     ping -i 60 -c 5 "$(route -n | grep 'tun0' | awk '{print $2;}' | sort -n | tail -n1)" > /dev/null || systemctl restart openvpn | mutt -s 'OpenVPN restarted' log@gebaschtel.ch
 EOF"
 
 sudo systemctl enable --now openvpn
@@ -90,6 +90,7 @@ function install_postfix() {
     export DEBIAN_FRONTEND=noninteractive
     sudo apt-get install -yq postfix mutt
     sudo systemctl stop postfix
+    sudo rmdir /etc/postfix/dynamicmaps.cf.d /etc/postfix/postfix-files.d  /etc/postfix/sasl/
 
     echo "  >> setting up postfix"
     if [ -z "${SENDERDOMAIN}" ]; then SENDERDOMAIN="${myPublicName}"; fi
@@ -109,47 +110,46 @@ function install_postfix() {
     fi
         
     # overwrite postfix configuration
-    sudo bash -c "cat << EOF > /etc/postfix/main.cf
+    sudo bash -c 'cat << EOF > /etc/postfix/main.cf
 # localhost-only mail-relay
 inet_protocols = ipv4
 inet_interfaces = loopback-only
 mynetworks = 127.0.0.0/8
 mailbox_size_limit = 0
 allow_percent_hack = no
-# rewrite 'from' and 'subject' fields
+# rewrite "from" and "subject" fields
 header_checks = pcre:/etc/postfix/header_checks.pcre
-# rewrite 'to' field
+# rewrite "to" field
 #recipient_canonical_maps = regexp:/etc/postfix/recipient.regex
 # send mail to smarthost instead directly to recipient
 #relayhost = RELAYHOST
 # when sending directly (w/o relay host), set myhostname to your public IP/Name 
 #myhostname = SENDERDOMAIN
-EOF" 
+EOF'
     
-    sudo bash -c 'cat << EOF > 
-echo '### tweak the from-address look
+    sudo bash -c 'cat << EOF > /etc/postfix/header_checks.pcre
+### tweak the from-address look
 /From:(.*)<(.*)@(.*)>/ REPLACE From: RWT${1}<${2}_AT_${3}@SENDERDOMAIN>
 /From:(.*)<(.*)>/ REPLACE From: RWT${1}<${2}@SENDERDOMAIN>
 # ${1} = orginal display name
 # ${2} = orginal email name
 # ${3} = orginal hostname
 # ${4} = orginal domainname
+EOF'
  
-### tweak the subject line
-/Subject:(.*)/   REPLACE Subject: RWT:${1}' > /etc/postfix/header_checks.pcre
-      
-    echo '### send ALL mail to this address
-/./     RECEIPIENT' > /etc/postfix/recipient.regex
-EOF' > /etc/postfix/recipient.regex
+    sudo bash -c 'cat << EOF > /etc/postfix/recipient.regex
+### send ALL mail to this address
+/./     RECEIPIENT
+EOF' 
 
     # apply values from above
-    sudo sed -i "s?RECEIPIENT?${RECEIPIENT}?g"       /etc/postfix/*
-    sudo sed -i "s?RELAYHOST?${RELAYHOST}?g"         /etc/postfix/*
+    sudo sed -i "s?RECEIPIENT?"${RECEIPIENT}"?g"       /etc/postfix/*
+    sudo sed -i "s?RELAYHOST?"${RELAYHOST}"?g"         /etc/postfix/*
     if [ "${RELAYHOST}" != "" ]; then
-        sudo sed -i "s?#relayhost?relayhost?g"      /etc/postfix/main.cf
+        sudo sed -i "s?#relayhost?"${RELAYHOST}"?g"      /etc/postfix/main.cf
         fi
     if [ "${SENDERDOMAIN}" != "" ]; then
-        sudo sed -i "s?SENDERDOMAIN?${SENDERDOMAIN}?g"   /etc/postfix/*
+        sudo sed -i "s?SENDERDOMAIN?"${SENDERDOMAIN}"?g"   /etc/postfix/*
         fi
     if [ "${MY_ENVIRONMENT}}" != "" ]; then
         sudo sed -i "s?RWT?${MY_ENVIRONMENT}?g"   /etc/postfix/*
@@ -157,7 +157,8 @@ EOF' > /etc/postfix/recipient.regex
         
     # local unix mail aliases
     if ! grep -q "${RECEIPIENT}" /etc/aliases; then
-        sudo echo "root:  ${RECEIPIENT}" >> /etc/aliases
+        sudo bash -c 'echo "root:  ${RECEIPIENT}" >> /etc/aliases'
+        sudo sed -i "s?^root:.*?root: "${RECEIPIENT}"?g" /etc/aliases
         sudo newaliases
         fi
      
@@ -168,17 +169,14 @@ EOF' > /etc/postfix/recipient.regex
         sudo sed -i "s?header_checks?#header_checks?g"   /etc/postfix/main.cf
         fi
     
-    echo "--------------------------------" > /var/log/maillog 
     sudo chmod g-w /etc/postfix/*
     sudo systemctl restart postfix; systemctl status postfix
     
     # delete all enqueued mails from failing tests before - nasty
-    postsuper -d ALL
+    sudo postsuper -d ALL
 
     echo "this mail was supposed for someone..., maybe got redirected to ${RECEIPIENT}" | mutt -s "just say hi, here is `hostname` `date`" log@gebaschtel.ch
-    tail -f /var/log/maillog 
 }
 
-
- 
+install_postfix "rpi-$(grep Serial /proc/cpuinfo | cut -c23-).gebaschtel.ch" "log@gebaschtel.ch" "talkto.gebaschtel.ch"
 ```

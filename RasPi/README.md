@@ -25,9 +25,23 @@ sudo reboot
 sudo pip3 install simplejson flask yattag hurry.filesize wiringpi 
 ```
 
-##### additional permissions for PWM/Servo
+#### install other stuff
 ```bash
-sudo adduser pi gpio
-sudo chown root.gpio /dev/gpiomem
-sudo chmod g+rw /dev/gpiomem
+sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower
+```
+
+### more adjustments
+```bash
+sudo sed -i '/^exit 0/icpupower frequency-set -g ondemand > /dev/null' /etc/rc.local
+sudo sed -i '/^exit 0/iecho "\`date`\" | mutt -s "system rebooted" log@gebaschtel.ch' /etc/rc.local
+sudo bash -c 'cat << EOF >> /etc/rsyslog.conf 
+*.*  @@syslog.bnet.gebaschtel.ch:514
+EOF'
+sudo systemctl restart syslog
+```
+### clone project and enable services
+```bash
+cd ~
+git clone https://github.com/maldex/absurda.git
+sudo systemctl enable /home/pi/absurda/RasPi/CamService.service
 ```
