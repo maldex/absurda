@@ -19,21 +19,9 @@ running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
 - 1 System Options -> S7 Splash Screen -> no
 - 1 System Options -> S3 Password -> set a new one
 
-#### just fresh Raspberry basic tasks
-```bash
-# remove some space-consuming packets
-sudo apt-get purge -y wolfram-engine libreoffice*
-# simple cleanup and update
-sudo apt-get clean -y
-sudo apt-get autoremove -y
-sudo apt-get update
-sudo apt-get upgrade -y
-# yes, also linux should be rebooted after an update
-sudo reboot
-```
-
 #### install other stuff
 ```bash
+sudo apt-get update
 sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate python3-pip
 ```
 
@@ -66,4 +54,18 @@ git clone https://github.com/maldex/absurda.git
 sudo systemctl enable --now /home/pi/absurda/RasPy/CamService.service
 # sudo systemctl enable --now /home/pi/absurda/RasPy/OpenCvService.service
 # sudo systemctl enable --now /home/pi/absurda/RasPy/ServoService.service
+```
+
+
+#### just fresh Raspberry basic tasks
+```bash
+# remove some space-consuming packets
+sudo apt-get purge -y wolfram-engine libreoffice*
+# simple cleanup and update
+sudo apt-get clean -y
+sudo apt-get autoremove -y
+sudo apt-get update
+sudo apt-get upgrade -y
+# yes, also linux should be rebooted after an update
+sudo reboot
 ```
