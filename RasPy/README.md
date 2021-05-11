@@ -17,9 +17,8 @@ running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
 - 3 Interface Options -> P2 SSH -> yes
 - 3 Interface Options -> P5 I2C -> yes
 - 4 Performance Options -> P2 GPU Memory -> 128
-- 5 Internation -> L2 Timezone -> Europe/Zurich
-
-
+- 5 Internationalization -> L2 Timezone -> Europe/Zurich
+- 5 Internationalization -> L3 Keyboard -> German Switzerland & enable alt-ctrl-backspace to kill X11
 
 
 #### just fresh Raspberry basic tasks
@@ -35,12 +34,6 @@ sudo apt-get upgrade -y
 sudo reboot
 ```
 
-
-#### install python libraries
-```bash
-sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl
-```
-
 #### install other stuff
 ```bash
 sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate
@@ -52,7 +45,6 @@ sudo sed -i '/pool/ s/^#*/#/' /etc/ntp.conf
 sudo sed -i '/^#pool 0.*/ipool time.gebaschtel.ch iburst' /etc/ntp.conf
 sudo systemctl enable --now ntp
 
-
 sudo sed -i '/^exit 0/i# systemctl stop ntp; ntpdate time.gebaschtel.ch; systemctl start ntp\
 cpupower frequency-set -g ondemand > /dev/null\
 echo "\`date`\" | mutt -s "system rebooted" log@gebaschtel.ch\
@@ -63,6 +55,12 @@ sudo bash -c 'cat << EOF >> /etc/rsyslog.conf
 EOF'
 sudo systemctl restart syslog
 ```
+
+#### install python libraries
+```bash
+sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl
+```
+
 ### clone project and enable services
 ```bash
 cd ~
