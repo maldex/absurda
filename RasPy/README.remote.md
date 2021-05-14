@@ -162,3 +162,23 @@ EOF'
 
 install_postfix "rpi-$(grep Serial /proc/cpuinfo | cut -c23-).gebaschtel.ch" "log@gebaschtel.ch" "talkto.gebaschtel.ch"
 ```
+
+```bash
+#wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/install-node-v15.6.0.sh | sudo bash
+sudo apt-get update
+sudo apt-get install npm node
+sudo npm install -g npm@latest
+sudo npm install frontail -g
+sudo bash -c "cat << EOF > /lib/systemd/system/frontail.service
+[Unit]
+Description=Frontail log2web
+ 
+[Service]
+ExecStart=/opt/nodejs/bin/frontail -p 7411 --ui-highlight -t dark /var/log/syslog
+ 
+[Install]
+WantedBy=multi-user.target
+EOF"
+
+sudo systemctl enable --now frontail
+```
