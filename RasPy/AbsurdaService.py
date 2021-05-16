@@ -3,7 +3,7 @@
 
 # sudo pip3 install simplejson flask yattag hurry.filesize
 
-import os, sys, time, io, logging, picamera, requests, base64, datetime
+import os, sys, time, io, logging, picamera, requests, base64, datetime, subprocess
 from flask import Flask, request, Response, render_template
 from yattag import Doc
 from hurry.filesize import size
@@ -40,8 +40,14 @@ def url_get_pic():
                             pic=base64.b64encode(picture).decode(),
                             post=post)
 
-    with open("/tmp/report-" + datetime.now().strftime('%Y%m%d%H%M%S%f') + ".html", 'w') as f:
+
+    report_file = "/tmp/report-" + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + ".html"
+    with open(report_file, 'w') as f:
         f.write(report)
+
+    if 'print' in request.values and str(request.values['print']).lower() == 'true':
+        subprocess.Popen(["bash", "AbsurdaPrint.sh", report_file])
+
     return report
 
 @app.route("/")
@@ -51,6 +57,9 @@ def index():
     with tag('h2'):
         text("Get Data")
     with tag('a', ('href', '/report')): text('report')
+    text(' - ')
+    with tag('a', ('href', '/report?print=true')):
+        text('report(print)')
     text(' - ')
     with tag('a', ('href', '/test')): text('test')
 

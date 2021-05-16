@@ -22,7 +22,7 @@ running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
 #### install other stuff
 ```bash
 sudo apt-get update
-sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate python3-pip
+sudo apt-get install -yq mc git iptraf-ng fswebcam linux-cpupower ntp ntpdate python3-pip html2ps wkhtmltopdf
 ```
 
 ### more adjustments
@@ -44,7 +44,7 @@ sudo systemctl restart syslog
 
 #### install python libraries
 ```bash
-sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl arrow pathlib python-libmagic
+sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl arrow pathlib python-libmagic 
 ```
 
 ### clone project and enable services
