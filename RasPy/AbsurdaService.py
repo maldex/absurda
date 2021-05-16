@@ -7,6 +7,7 @@ import os, sys, time, io, logging, picamera, requests, base64, datetime
 from flask import Flask, request, Response, render_template
 from yattag import Doc
 from hurry.filesize import size
+from pprint import pprint
 
 app = Flask(__name__, static_url_path='', template_folder=os.getcwd() + '/templates')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024    # 16 MB
@@ -33,11 +34,15 @@ def url_get_pic():
 * THANK YOU FOR YOUR DATA *
 ***************************"""
 
-    return render_template("report.html",
+    report = render_template("report.html",
                             current_state="tuiiii",
                             pre=pre,
                             pic=base64.b64encode(picture).decode(),
                             post=post)
+
+    with open("/tmp/report-" + datetime.now().strftime('%Y%m%d%H%M%S%f') + ".html", 'w') as f:
+        f.write(report)
+    return report
 
 @app.route("/")
 def index():
@@ -46,7 +51,7 @@ def index():
     with tag('h2'):
         text("Get Data")
     with tag('a', ('href', '/report')): text('report')
-    tag(' - ')
+    text(' - ')
     with tag('a', ('href', '/test')): text('test')
 
     with tag('hr'):
