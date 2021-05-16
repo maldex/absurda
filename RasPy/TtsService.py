@@ -27,7 +27,7 @@ def text2speech(text="burp", lang='it-IT', id=None):
 
 
 class CleanUpThread(threading.Thread):
-    def __init__(self, workdir='./', age=60, globs=['*.wav','*.mp3','*.txt'], interval=5, debug=False):
+    def __init__(self, workdir='./', age=300, globs=['*.wav','*.mp3','*.txt'], interval=60, debug=False):
         threading.Thread.__init__(self)
         self.workdir, self.age, self.globs, self.interval, self.debug = workdir, age, globs, interval, debug
         self.alive = False

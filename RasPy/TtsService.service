@@ -1,11 +1,11 @@
 [Unit]
-Description=OpenCvService.py
+Description=TtsService.py
 After=network.target
 
 [Service]
 User=pi
 WorkingDirectory=/home/pi/absurda/RasPy
-ExecStart=/usr/bin/python3 OpenCvService.py
+ExecStart=/usr/bin/python3 TtsService.py
 Restart=always
 RestartSec=5
 

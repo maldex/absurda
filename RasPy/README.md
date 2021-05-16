@@ -52,6 +52,7 @@ sudo pip3 install simplejson flask yattag hurry.filesize wiringpi piServoCtl arr
 cd ~
 git clone https://github.com/maldex/absurda.git
 sudo systemctl enable --now /home/pi/absurda/RasPy/CamService.service
+sudo systemctl enable --now /home/pi/absurda/RasPy/TtsService.service
 # sudo systemctl enable --now /home/pi/absurda/RasPy/OpenCvService.service
 # sudo systemctl enable --now /home/pi/absurda/RasPy/ServoService.service
 ```
