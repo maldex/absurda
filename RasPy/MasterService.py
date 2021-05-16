@@ -45,8 +45,9 @@ def index():
 
     with tag('h2'):
         text("Get Data")
-
-    with tag('a', ('href', '/run')): text('VGA')
+    with tag('a', ('href', '/report')): text('report')
+    tag(' - ')
+    with tag('a', ('href', '/test')): text('test')
 
     with tag('hr'):
         pass
