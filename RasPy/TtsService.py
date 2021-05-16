@@ -10,6 +10,7 @@ from datetime import datetime
 from hurry.filesize import size
 from pprint import pprint
 
+templates_dir = os.getcwd() + '/templates'
 os.chdir('/tmp')
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,7 +28,7 @@ def text2speech(text="burp", lang='it-IT', id=None):
 
 
 class CleanUpThread(threading.Thread):
-    def __init__(self, workdir='./', age=300, globs=['*.wav','*.mp3','*.txt'], interval=60, debug=False):
+    def __init__(self, workdir='./', age=300, globs=['*.wav','*.mp3','*.txt'], interval=30, debug=False):
         threading.Thread.__init__(self)
         self.workdir, self.age, self.globs, self.interval, self.debug = workdir, age, globs, interval, debug
         self.alive = False
@@ -58,7 +59,7 @@ class CleanUpThread(threading.Thread):
                         os.remove(item.absolute())
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='', template_folder=templates_dir)
 app.logger.setLevel(logging.DEBUG)
 
 

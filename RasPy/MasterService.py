@@ -8,7 +8,7 @@ from flask import Flask, request, Response, render_template
 from yattag import Doc
 from hurry.filesize import size
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='', template_folder=os.getcwd() + '/templates')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024    # 16 MB
 app.logger.setLevel(logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG)
@@ -26,6 +26,7 @@ def url_get_pic():
 
     pre = {'data1': "some text",
            'data2': "19912345-335",
+           'hallo': "sunny shiny",
            'datetime':  datetime.datetime.now().strftime('%y.%m.%d %H:%M:%S')}
 
     post = """***************************
