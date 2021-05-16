@@ -45,9 +45,6 @@ def url_detect_faces():
         cv2.line(frame, (x+w, y+h), (x+int(w/2), y+h), color, 5)
         cv2.line(frame, (x+w, y+h), (x+w, y+int(h/2)), color, 5)
 
-
-
-
         # frame = cv2.putText(frame, "face", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 4, cv2.LINE_8)
 
     rc, jpeg_pic = cv2.imencode(".jpg", frame)
@@ -73,7 +70,6 @@ def url_index():
     return Response(doc.getvalue(), mimetype='text/html;charset=UTF-8')
 
 if __name__ == "__main__":
-    #DA_thread.start()
     app.run(debug=False, host='0.0.0.0', port=3001)
 
 
