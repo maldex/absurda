@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # sudo pip3 install simplejson flask yattag hurry.filesize
+# sudo systemctl stop AbsurdaService
 
 import os, sys, time, io, logging, picamera, requests, base64, datetime, subprocess
 from flask import Flask, request, Response, render_template

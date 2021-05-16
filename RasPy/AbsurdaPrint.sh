@@ -8,3 +8,6 @@ echo ${pdfFile}
 wkhtmltopdf ${htmlFile} ${pdfFile}
 lpstat -d # -p
 lp ${pdfFile}
+
+sleep 12
+echo  yseeeee
