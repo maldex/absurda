@@ -1,0 +1,13 @@
+[Unit]
+Description=AbsurdaService.py
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/absurda/RasPy
+ExecStart=/usr/bin/python3 AbsurdaService.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
