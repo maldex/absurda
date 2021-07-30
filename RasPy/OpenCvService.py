@@ -39,7 +39,7 @@ def url_detect_faces():
     # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
         # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        color = (0, 255, 0)
+        color = (255, 255, 255)
         cv2.line(frame, (x, y), (x+int(w/2), y), color, 5)
         cv2.line(frame, (x, y), (x, y+int(h/2)), color, 5)
         cv2.line(frame, (x+w, y+h), (x+int(w/2), y+h), color, 5)

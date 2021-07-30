@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
@@ -17,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/test', methods=["GET"])
 def url_test():
-    plain_picture = requests.get("http://127.0.0.1:3000/pic.jpeg", {'width': 640, 'height': 400}).content
+    plain_picture = requests.get("http://127.0.0.1:3000/pic.jpeg", {'width': 269, 'height': 419}).content
     faced_picture = requests.post("http://127.0.0.1:3001/detect_faces", data={'image': base64.b64encode(plain_picture)} ).content
     return Response(faced_picture, mimetype='image/jpeg')
 
