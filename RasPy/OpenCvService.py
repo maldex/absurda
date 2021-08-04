@@ -6,6 +6,7 @@ from flask import Flask, request, Response, jsonify, abort, render_template, red
 from yattag import Doc
 import os, sys, requests, time, datetime, threading, logging, psutil, socket, smbus, subprocess, requests, cv2, numpy, base64, io
 import simplejson as json
+from random import randrange
 
 faceCascade = cv2.CascadeClassifier('/home/pi/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
 
@@ -39,11 +40,17 @@ def url_detect_faces():
     # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
         # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        color = (255, 255, 255)
-        cv2.line(frame, (x, y), (x+int(w/2), y), color, 5)
-        cv2.line(frame, (x, y), (x, y+int(h/2)), color, 5)
-        cv2.line(frame, (x+w, y+h), (x+int(w/2), y+h), color, 5)
-        cv2.line(frame, (x+w, y+h), (x+w, y+int(h/2)), color, 5)
+        color = (255, 255, 255)  # white
+        thickness = 10
+        # come corrections
+        x -= 20; y -= 20; w += 40; h += 40
+        cv2.line(frame, (x, y), (x + w, y), color, thickness)
+        cv2.line(frame, (x, y), (x, y + h), color, thickness)
+        cv2.line(frame, (x + w, y), (x + w, y + h), color, thickness)
+        cv2.line(frame, (x, y + h), (x + w, y + h), color, thickness)
+
+        cv2.putText(frame, 'USER: ' + str(randrange(100,999)), (x-5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+
 
         # frame = cv2.putText(frame, "face", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 4, cv2.LINE_8)
 

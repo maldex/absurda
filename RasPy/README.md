@@ -7,7 +7,7 @@
 - Just simply copy paste the following commands into your shell.
 
 #### 
-running `cat /etc/cpuinfo` and `sudo raspi-config`, do the following:
+running `cat /proc/cpuinfo` and `sudo raspi-config`, do the following:
 - 5 Internationalization -> L3 Keyboard -> German Switzerland & enable alt-ctrl-backspace to kill X11
 - 5 Internationalization -> L2 Timezone -> Europe/Zurich
 - 4 Performance Options -> P2 GPU Memory -> 128
