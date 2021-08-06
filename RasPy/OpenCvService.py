@@ -48,11 +48,9 @@ def url_detect_faces():
         cv2.line(frame, (x, y), (x, y + h), color, thickness)
         cv2.line(frame, (x + w, y), (x + w, y + h), color, thickness)
         cv2.line(frame, (x, y + h), (x + w, y + h), color, thickness)
+        cv2.rectangle(frame, (x - 5, y - 10), (x + 100, y + 50), color, 10)
+        cv2.putText(frame, 'USER: ' + str(randrange(1000,9999)), (x - 5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
-        cv2.putText(frame, 'USER: ' + str(randrange(100,999)), (x-5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
-
-
-        # frame = cv2.putText(frame, "face", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 4, cv2.LINE_8)
 
     rc, jpeg_pic = cv2.imencode(".jpg", frame)
     return Response(jpeg_pic.tobytes(), mimetype='image/jpeg')
