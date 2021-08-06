@@ -38,18 +38,25 @@ def url_detect_faces():
     )
 
     # Draw a rectangle around the faces
+    color = (255, 255, 255)  # white
+    thickness = 10  # of line
+
     for (x, y, w, h) in faces:
-        # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        color = (255, 255, 255)  # white
-        thickness = 10
-        # come corrections
+        # make the border around the face a bit bigger, give some margin of 20px
         x -= 20; y -= 20; w += 40; h += 40
+
+        # draw lines around the face
         cv2.line(frame, (x, y), (x + w, y), color, thickness)
         cv2.line(frame, (x, y), (x, y + h), color, thickness)
         cv2.line(frame, (x + w, y), (x + w, y + h), color, thickness)
         cv2.line(frame, (x, y + h), (x + w, y + h), color, thickness)
+
+        # put a black rectangle where the text will go
         cv2.rectangle(frame, (x - 5, y - 10), (x + 100, y + 50), color, 10)
-        cv2.putText(frame, 'USER: ' + str(randrange(1000,9999)), (x - 5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+
+        # put some desc. above the face frame
+        text = 'USER: ' + str(randrange(1000,9999))
+        cv2.putText(frame, text, (x - 5, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
 
     rc, jpeg_pic = cv2.imencode(".jpg", frame)
